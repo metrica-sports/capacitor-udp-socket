@@ -216,7 +216,7 @@ public class UdpSocketPlugin: CAPPlugin {
             return
         }
 
-        socket.socket?.perform({ () -> Void in
+        socket.socket?.perform({ () in
             if socket.socket?.isIPv4() ?? false {
                 var ttlCpy: CUnsignedChar = (ttl as NSNumber).uint8Value
                 if setsockopt(socket.socket?.socket4FD() ?? 0, IPPROTO_IP, IP_MULTICAST_TTL, &ttlCpy, UInt32( MemoryLayout.size(ofValue: ttlCpy))) < 0 {
@@ -240,7 +240,7 @@ public class UdpSocketPlugin: CAPPlugin {
         }
         let enabled = call.getBool("enabled", false)
 
-        socket.socket?.perform({ () -> Void in
+        socket.socket?.perform({ () in
             if socket.socket?.isIPv4() ?? false {
                 var loop: CUnsignedChar = enabled ? 1 : 0
                 if setsockopt(socket.socket?.socket4FD() ?? 0, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, UInt32( MemoryLayout.size(ofValue: loop))) < 0 {

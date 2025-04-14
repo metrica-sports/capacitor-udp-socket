@@ -139,9 +139,7 @@ export interface UdpSocketPlugin {
    *
    * @since 5.0.0
    */
-  setMulticastLoopbackMode(
-    options: SetMulticastLoopbackModeOptions,
-  ): Promise<void>;
+  setMulticastLoopbackMode(options: SetMulticastLoopbackModeOptions): Promise<void>;
 
   /**
    * Listening for data reception events
@@ -150,10 +148,7 @@ export interface UdpSocketPlugin {
    *
    * @since 5.0.0
    */
-  addListener(
-    eventName: 'receive',
-    listenerFunc: (event: ReceiveEvent) => void,
-  ): Promise<PluginListenerHandle>;
+  addListener(eventName: 'receive', listenerFunc: (event: ReceiveEvent) => void): Promise<PluginListenerHandle>;
 
   /**
    * Listening for data reception exception events
@@ -162,10 +157,7 @@ export interface UdpSocketPlugin {
    *
    * @since 5.0.0
    */
-  addListener(
-    eventName: 'receiveError',
-    listenerFunc: (event: ReceiveEvent) => void,
-  ): Promise<PluginListenerHandle>;
+  addListener(eventName: 'receiveError', listenerFunc: (event: ReceiveEvent) => void): Promise<PluginListenerHandle>;
 }
 
 // types

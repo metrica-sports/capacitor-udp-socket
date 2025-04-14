@@ -68,9 +68,7 @@ export class UdpSocketWeb extends WebPlugin implements UdpSocketPlugin {
     console.log('leaveGroup', options);
     throw new Error('Method not implemented.');
   }
-  async setMulticastTimeToLive(
-    options: SetMulticastTimeToLiveOptions,
-  ): Promise<void> {
+  async setMulticastTimeToLive(options: SetMulticastTimeToLiveOptions): Promise<void> {
     console.log('setMulticastTimeToLive', options);
     throw new Error('Method not implemented.');
   }
@@ -78,9 +76,7 @@ export class UdpSocketWeb extends WebPlugin implements UdpSocketPlugin {
     console.log('setBroadcast', options);
     throw new Error('Method not implemented.');
   }
-  async setMulticastLoopbackMode(
-    options: SetMulticastLoopbackModeOptions,
-  ): Promise<void> {
+  async setMulticastLoopbackMode(options: SetMulticastLoopbackModeOptions): Promise<void> {
     console.log('setMulticastLoopbackMode', options);
     throw new Error('Method not implemented.');
   }

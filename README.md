@@ -30,8 +30,8 @@ npx cap sync
 * [`getJoinedGroups()`](#getjoinedgroups)
 * [`setMulticastTimeToLive(...)`](#setmulticasttimetolive)
 * [`setMulticastLoopbackMode(...)`](#setmulticastloopbackmode)
-* [`addListener('receive', ...)`](#addlistenerreceive)
-* [`addListener('receiveError', ...)`](#addlistenerreceiveerror)
+* [`addListener('receive', ...)`](#addlistenerreceive-)
+* [`addListener('receiveError', ...)`](#addlistenerreceiveerror-)
 * [Interfaces](#interfaces)
 
 </docgen-index>
