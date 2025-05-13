@@ -30,6 +30,8 @@ typealias onReceivedHandlerHandler = (_ data: [String: Any]) -> Void
         super.init()
 
         self.socket = GCDAsyncUdpSocket.init(delegate: self, delegateQueue: DispatchQueue.main)
+        self.socket?.setIPv4Enabled(true)
+        self.socket?.setIPv6Enabled(false) //Disable ipv6 to prevent IPv4-only calls failing
 
         try? self.socket?.enableBroadcast(false)
         try? self.socket?.enableReusePort(true)
