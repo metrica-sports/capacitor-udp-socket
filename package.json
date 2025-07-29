@@ -1,7 +1,25 @@
 {
-  "name": "capacitor-udp-socket",
-  "version": "7.0.0",
+  "name": "@metrica-sports/capacitor-udp-socket",
+  "version": "1.0.0",
   "description": "A UDP Socket Plugin for capacitor",
+  "license": "MIT",
+  "author": {
+    "name": "Metrica Sports",
+    "email": "info@metrica-sports.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metrica-sports/capacitor-udp-socket"
+  },
+  "versionForked": "7.0.0",
+  "authorForked": "Svend <svend.jin@gmail.com>",
+  "repositoryForked": {
+    "type": "git",
+    "url": "git+https://github.com/gee1k/capacitor-udp-socket.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -13,15 +31,6 @@
     "ios/Plugin/",
     "CapacitorUdpSocket.podspec"
   ],
-  "author": "Svend <svend.jin@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gee1k/capacitor-udp-socket.git"
-  },
-  "bugs": {
-    "url": "https://github.com/gee1k/capacitor-udp-socket/issues"
-  },
   "keywords": [
     "capacitor",
     "plugin",
@@ -74,8 +83,5 @@
     "android": {
       "src": "android"
     }
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
