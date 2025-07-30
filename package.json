@@ -29,7 +29,7 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "CapacitorUdpSocket.podspec"
+    "MetricaSportsCapacitorUdpSocket.podspec"
   ],
   "keywords": [
     "capacitor",
