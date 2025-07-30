@@ -1,13 +1,13 @@
-# capacitor-udp-socket
+# @metrica-sports/capacitor-udp-socket
 
-A UDP Socket Plugin for capacitor
+Capacitor UDP Socket Plugin
 
 Thanks [@unitree-czk](https://github.com/unitree-czk/capacitor-udp)
 
 ## Install
 
 ```bash
-npm install capacitor-udp-socket
+npm install @metrica-sports/capacitor-udp-socket
 npx cap sync
 ```
 
