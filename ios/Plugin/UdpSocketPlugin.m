@@ -11,6 +11,7 @@ CAP_PLUGIN(UdpSocketPlugin, "UdpSocket",
     CAP_PLUGIN_METHOD(close, CAPPluginReturnNone);
     CAP_PLUGIN_METHOD(closeAllSockets, CAPPluginReturnNone);
     CAP_PLUGIN_METHOD(setPaused, CAPPluginReturnNone);
+    CAP_PLUGIN_METHOD(listV4Interfaces, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getInfo, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(getSockets, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(setBroadcast, CAPPluginReturnNone);

@@ -13,7 +13,11 @@ typealias onReceivedHandlerHandler = (_ data: [String: Any]) -> Void
 
     var broadcastEnabled: Bool
     var isBound: Bool
-    var multicastGroup: Set<String>
+    struct MulticastKey: Hashable {
+        let address: String
+        let interface: String
+    }
+    var multicastGroups: Set<MulticastKey>
 
     var onReceivedHandler: onReceivedHandlerHandler?
     var onReceivedErrorHandler: onReceivedHandlerHandler?
@@ -23,7 +27,7 @@ typealias onReceivedHandlerHandler = (_ data: [String: Any]) -> Void
         self.bufferSize = 4096
         self.name = ""
         self.paused = false
-        self.multicastGroup = Set<String>()
+        self.multicastGroups = Set<MulticastKey>()
         self.broadcastEnabled = false
         self.isBound = false
 
@@ -126,27 +130,25 @@ typealias onReceivedHandlerHandler = (_ data: [String: Any]) -> Void
         broadcastEnabled = enabled
     }
 
-    public func joinGroup(_ address: String) throws {
-        if multicastGroup.contains(address) {
-            throw SocketsError.Error("Already bound")
+    public func joinGroup(_ address: String, interface: String) throws {
+        let key = MulticastKey(address: address, interface: interface)
+        if multicastGroups.contains(key) {
+            throw SocketsError.Error("Already bound on \(interface)")
         }
         do {
-            try socket?.joinMulticastGroup(address, onInterface: "en0")
-            multicastGroup.insert(address)
+            try socket?.joinMulticastGroup(address, onInterface: interface)
+            multicastGroups.insert(key)
         } catch {
-            throw SocketsError.Error("joinGroup error")
+            throw SocketsError.Error("joinGroup error: \(error)")
         }
     }
 
     public func leaveGroup(_ address: String) throws {
-        if !multicastGroup.contains(address) {
-            return
-        }
-        do {
-            try socket?.leaveMulticastGroup(address, onInterface: "en0")
-            multicastGroup.remove(address )
-        } catch {
-            throw SocketsError.Error("joinGroup error")
+        let groupsToRemove = multicastGroups.filter { $0.address == address }
+
+        for group in groupsToRemove {
+            try socket?.leaveMulticastGroup(group.address, onInterface: group.interface)
+            multicastGroups.remove(group)
         }
 
     }

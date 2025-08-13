@@ -96,6 +96,15 @@ export interface UdpSocketPlugin {
    */
   getSockets(): Promise<GetSocketsResult>;
 
+
+    /**
+   * Obtain all the available network interfaces.
+   *
+   * Only available on iOS.
+   *
+   */
+  listV4Interfaces(): Promise<ListV4InterfacesResult>;
+
   /**
    * Join a particular group address. For IPv4, it's like "238.12.12.12". For IPv6, it's like "ff02::08".
    *
@@ -356,6 +365,9 @@ export interface GetSocketsResult {
    */
   sockets: InfoResult[];
 }
+export interface ListV4InterfacesResult {
+  interfaces: string[];
+}
 
 /**
  * Parameters for joining a multicast group
@@ -372,6 +384,10 @@ export interface JoinGroupOptions {
    * For IPv4, it's like "238.12.12.12". For IPv6, it's like "ff02::08".
    */
   address: string;
+  /**
+   * The interface used to join the group
+   */
+  interface: string;
 }
 
 /**

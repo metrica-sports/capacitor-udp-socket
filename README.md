@@ -25,6 +25,7 @@ npx cap sync
 * [`setPaused(...)`](#setpaused)
 * [`getInfo(...)`](#getinfo)
 * [`getSockets()`](#getsockets)
+* [`listV4Interfaces()`](#listv4interfaces)
 * [`joinGroup(...)`](#joingroup)
 * [`leaveGroup(...)`](#leavegroup)
 * [`getJoinedGroups()`](#getjoinedgroups)
@@ -229,6 +230,21 @@ Only available on Android and iOS.
 **Returns:** <code>Promise&lt;<a href="#getsocketsresult">GetSocketsResult</a>&gt;</code>
 
 **Since:** 5.0.0
+
+--------------------
+
+
+### listV4Interfaces()
+
+```typescript
+listV4Interfaces() => Promise<ListV4InterfacesResult>
+```
+
+Obtain all the available network interfaces.
+
+Only available on iOS.
+
+**Returns:** <code>Promise&lt;<a href="#listv4interfacesresult">ListV4InterfacesResult</a>&gt;</code>
 
 --------------------
 
@@ -496,14 +512,22 @@ Parameters for getting information about all UDP sockets
 | **`sockets`** | <code>InfoResult[]</code> | The list of UDP sockets |
 
 
+#### ListV4InterfacesResult
+
+| Prop             | Type                  |
+| ---------------- | --------------------- |
+| **`interfaces`** | <code>string[]</code> |
+
+
 #### JoinGroupOptions
 
 Parameters for joining a multicast group
 
-| Prop           | Type                | Description                                                                                                     |
-| -------------- | ------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **`socketId`** | <code>number</code> | The id of the socket                                                                                            |
-| **`address`**  | <code>string</code> | The address of the multicast group to join. For IPv4, it's like "238.12.12.12". For IPv6, it's like "ff02::08". |
+| Prop            | Type                | Description                                                                                                     |
+| --------------- | ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **`socketId`**  | <code>number</code> | The id of the socket                                                                                            |
+| **`address`**   | <code>string</code> | The address of the multicast group to join. For IPv4, it's like "238.12.12.12". For IPv6, it's like "ff02::08". |
+| **`interface`** | <code>string</code> | The interface used to join the group                                                                            |
 
 
 #### LeaveGroupOptions

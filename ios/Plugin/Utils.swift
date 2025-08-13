@@ -78,4 +78,28 @@ public class Utils {
         freeifaddrs(ifaddr)
         return address
     }
+    
+    static func listV4Interfaces() -> [String]{
+        var addressList: [String] = []
+        // Get list of all interfaces on the local machine:
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0 else { return addressList }
+        guard let firstAddr = ifaddr else { return addressList }
+
+        // For each interface ...
+        for ifptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ifptr.pointee
+
+            // Check for IPv4 or IPv6 interface:
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            if addrFamily == UInt8(AF_INET) {
+
+                // Check interface name:
+                let name = String(cString: interface.ifa_name)
+                addressList.append(name)
+            }
+        }
+        freeifaddrs(ifaddr)
+        return addressList
+    }
 }

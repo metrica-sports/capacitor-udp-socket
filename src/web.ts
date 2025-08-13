@@ -12,6 +12,7 @@ import type {
   InfoResult,
   JoinGroupOptions,
   LeaveGroupOptions,
+  ListV4InterfacesResult,
   ReceiveEvent,
   SendOptions,
   SendResult,
@@ -24,6 +25,9 @@ import type {
 } from './definitions';
 
 export class UdpSocketWeb extends WebPlugin implements UdpSocketPlugin {
+  async listV4Interfaces(): Promise<ListV4InterfacesResult> {
+    throw new Error('Method not implemented.');
+  }
   async create(options?: CreateOptions): Promise<CreateResult> {
     console.log('create', options);
     throw new Error('Method not implemented.');

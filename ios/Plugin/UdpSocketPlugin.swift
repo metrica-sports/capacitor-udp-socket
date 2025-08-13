@@ -126,6 +126,12 @@ public class UdpSocketPlugin: CAPPlugin {
         ])
     }
 
+    @objc func listV4Interfaces(_ call: CAPPluginCall) {
+        call.resolve([
+            "interfaces": Utils.listV4Interfaces()
+        ])
+    }
+    
     @objc func getInfo(_ call: CAPPluginCall) {
         guard let socketId = call.getInt("socketId"), let socket = sockets[socketId] else {
             call.reject("Socket not found")
@@ -164,8 +170,9 @@ public class UdpSocketPlugin: CAPPlugin {
             return
         }
         let address = call.getString("address", "")
+        let interface = call.getString("interface", "")
         do {
-            try socket.joinGroup(address)
+            try socket.joinGroup(address, interface: interface)
             call.resolve()
         } catch let SocketsError.Error(msg) {
             call.reject(msg)
@@ -197,11 +204,8 @@ public class UdpSocketPlugin: CAPPlugin {
             return
         }
 
-        let groups = socket.multicastGroup
-        var groupArray = [String]()
-        for group in groups {
-            groupArray.append(group)
-        }
+        let groups = socket.multicastGroups
+        let groupArray = groups.map { "\($0.address) on \($0.interface)" }
         call.resolve(["groups": groupArray])
     }
 
