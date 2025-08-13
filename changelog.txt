@@ -1,0 +1,9 @@
+[1.1.0] - 2025-08-13
+Added
+- Method to list ipv4 interfaces.
+Modified
+- Function 'joinGroup' now requires to specify the interface.
+
+[1.0.0] - 2025-07-30
+Added
+- First version with '@metrica-sports' prefix for NPM package.
