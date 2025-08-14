@@ -208,6 +208,56 @@ public class UdpSocketPlugin: CAPPlugin {
         let groupArray = groups.map { "\($0.address) on \($0.interface)" }
         call.resolve(["groups": groupArray])
     }
+    
+    @objc func setMulticastInterface(_ call: CAPPluginCall) {
+        guard let socketId = call.getInt("socketId"), let socket = sockets[socketId] else {
+            call.reject("Socket not found")
+            return
+        }
+        let ifaceName = call.getString("iface", "")
+        
+        socket.socket?.perform {
+            if socket.socket?.isIPv4() ?? false {
+                // Get IPv4 address for this interface
+                var ifaddrPtr: UnsafeMutablePointer<ifaddrs>?
+                if getifaddrs(&ifaddrPtr) == 0, let firstAddr = ifaddrPtr {
+                    var foundAddr = in_addr()
+                    var cursor: UnsafeMutablePointer<ifaddrs>? = firstAddr
+                    while let addr = cursor {
+                        if let name = String(validatingUTF8: addr.pointee.ifa_name),
+                           name == ifaceName,
+                           addr.pointee.ifa_addr.pointee.sa_family == UInt8(AF_INET) {
+                            
+                            var sin = UnsafeRawPointer(addr.pointee.ifa_addr).assumingMemoryBound(to: sockaddr_in.self).pointee
+                            foundAddr = sin.sin_addr
+                            break
+                        }
+                        cursor = addr.pointee.ifa_next
+                    }
+                    freeifaddrs(firstAddr)
+                    
+                    // Apply interface
+                    if setsockopt(socket.socket?.socket4FD() ?? 0, IPPROTO_IP, IP_MULTICAST_IF, &foundAddr, socklen_t(MemoryLayout.size(ofValue: foundAddr))) < 0 {
+                        call.reject("Failed to set IPv4 multicast interface")
+                        return
+                    }
+                } else {
+                    call.reject("Unable to get interface addresses")
+                    return
+                }
+            } else if socket.socket?.isIPv6() ?? false {
+                // IPv6 uses interface index
+                let ifIndex = if_nametoindex(ifaceName)
+                var indexCpy = UInt32(ifIndex)
+                if setsockopt(socket.socket?.socket6FD() ?? 0, IPPROTO_IPV6, IPV6_MULTICAST_IF, &indexCpy, socklen_t(MemoryLayout.size(ofValue: indexCpy))) < 0 {
+                    call.reject("Failed to set IPv6 multicast interface")
+                    return
+                }
+            }
+            
+            call.resolve()
+        }
+    }
 
     @objc func setMulticastTimeToLive(_ call: CAPPluginCall) {
         guard let socketId = call.getInt("socketId"), let socket = sockets[socketId] else {

@@ -142,6 +142,14 @@ export interface UdpSocketPlugin {
   setMulticastTimeToLive(options: SetMulticastTimeToLiveOptions): Promise<void>;
 
   /**
+   * Set the interface for multicast packets
+   *
+   *
+   * @since 5.0.0
+   */
+  setMulticastInterface(options: SetMulticastInterfaceOptions): Promise<void>;
+
+  /**
    * Set whether to enable multicast loopback mode
    *
    * Only available on Android and iOS.
@@ -421,6 +429,17 @@ export interface SetMulticastTimeToLiveOptions {
    * The time to live value.
    */
   ttl: number;
+}
+
+export interface SetMulticastInterfaceOptions {
+  /**
+   * The id of the socket
+   */
+  socketId: number;
+  /**
+   * The name of the interface
+   */
+  iface: string;
 }
 
 /**

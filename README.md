@@ -30,6 +30,7 @@ npx cap sync
 * [`leaveGroup(...)`](#leavegroup)
 * [`getJoinedGroups()`](#getjoinedgroups)
 * [`setMulticastTimeToLive(...)`](#setmulticasttimetolive)
+* [`setMulticastInterface(...)`](#setmulticastinterface)
 * [`setMulticastLoopbackMode(...)`](#setmulticastloopbackmode)
 * [`addListener('receive', ...)`](#addlistenerreceive-)
 * [`addListener('receiveError', ...)`](#addlistenerreceiveerror-)
@@ -323,6 +324,23 @@ Only available on Android and iOS.
 --------------------
 
 
+### setMulticastInterface(...)
+
+```typescript
+setMulticastInterface(options: SetMulticastInterfaceOptions) => Promise<void>
+```
+
+Set the interface for multicast packets
+
+| Param         | Type                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#setmulticastinterfaceoptions">SetMulticastInterfaceOptions</a></code> |
+
+**Since:** 5.0.0
+
+--------------------
+
+
 ### setMulticastLoopbackMode(...)
 
 ```typescript
@@ -557,6 +575,14 @@ Parameters for setting multicast time to live
 | -------------- | ------------------- | ----------------------- |
 | **`socketId`** | <code>number</code> | The id of the socket    |
 | **`ttl`**      | <code>number</code> | The time to live value. |
+
+
+#### SetMulticastInterfaceOptions
+
+| Prop           | Type                | Description               |
+| -------------- | ------------------- | ------------------------- |
+| **`socketId`** | <code>number</code> | The id of the socket      |
+| **`iface`**    | <code>string</code> | The name of the interface |
 
 
 #### SetMulticastLoopbackModeOptions
