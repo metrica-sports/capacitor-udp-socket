@@ -1,6 +1,7 @@
-[1.1.0] - 2025-08-13
+[1.1.0] - 2025-08-14
 Added
 - Method to list ipv4 interfaces.
+- Method to set multicast interface.
 Modified
 - Function 'joinGroup' now requires to specify the interface.
 
