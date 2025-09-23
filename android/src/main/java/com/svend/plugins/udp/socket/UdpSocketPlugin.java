@@ -14,9 +14,11 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.io.IOException;
+import java.net.NetworkInterface;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -220,8 +222,9 @@ public class UdpSocketPlugin extends Plugin {
         try {
             int socketId = call.getInt("socketId");
             String address = call.getString("address");
+            String iface = call.getString("interface");
             UdpSocket socket = obtainSocket(socketId);
-            socket.joinGroup(address);
+            socket.joinGroup(address, iface);
             call.resolve();
         } catch (Exception e) {
             call.reject(e.getMessage());
@@ -239,6 +242,31 @@ public class UdpSocketPlugin extends Plugin {
         } catch (Exception e) {
             call.reject(e.getMessage());
         }
+    }
+
+    @PluginMethod
+    public void setMulticastInterface(PluginCall call) {
+        Integer socketId = call.getInt("socketId");
+        if (socketId == null || !sockets.containsKey(socketId)) {
+            call.reject("Socket not found");
+            return;
+        }
+        String ifaceName = call.getString("iface");
+        if (ifaceName == null || ifaceName.isEmpty()) {
+            call.reject("No interface specified");
+            return;
+        }
+        UdpSocket udpSocket = sockets.get(socketId);
+        NetworkInterface iface = Utils.getNetworkInterfaceByHostAddress(ifaceName);
+        if (iface == null) {
+            call.reject("Interface not found: " + ifaceName);
+            return;
+        }
+      try {
+        udpSocket.setMulticastInterface(iface);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
 
     @PluginMethod
@@ -265,6 +293,14 @@ public class UdpSocketPlugin extends Plugin {
         } catch (Exception e) {
             call.reject(e.getMessage());
         }
+    }
+
+    @PluginMethod
+    public void listV4Interfaces(PluginCall call) {
+        List<String> interfaces = Utils.listV4Interfaces();
+        JSObject ret = new JSObject();
+        ret.put("interfaces", new JSArray(interfaces));
+        call.resolve(ret);
     }
 
     @PluginMethod

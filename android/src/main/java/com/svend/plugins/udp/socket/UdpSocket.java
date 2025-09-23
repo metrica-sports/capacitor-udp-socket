@@ -5,18 +5,22 @@ import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.StandardProtocolFamily;
 import java.net.StandardSocketOptions;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -57,7 +61,7 @@ public class UdpSocket {
         this.ipv4Address = Utils.getIPAddress(true);
         this.ipv6Address = Utils.getIPAddress(false);
         this.networkInterface = Utils.getNetworkInterface();
-        channel = DatagramChannel.open();
+        channel = DatagramChannel.open(StandardProtocolFamily.INET); // StandardProtocolFamily.INET to prevent IPV6 from being used
         channel.configureBlocking(false);
         channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, this.networkInterface);
         multicastSocket = null;
@@ -71,8 +75,7 @@ public class UdpSocket {
         multicastLoopback = true;
 
         isBound = false;
-
-        setProperties(properties);
+        setProperties(properties == null ? new JSObject() : properties);
         setBufferSize();
     }
 
@@ -181,9 +184,15 @@ public class UdpSocket {
         sendPackets.put(sendPacket);
     }
 
-    void bind(String address, int port) throws SocketException {
+    void bind(String address, int port) throws SocketException, UnknownHostException {
         channel.socket().setReuseAddress(true);
-        channel.socket().bind(new InetSocketAddress(port));
+        if(address == null){
+          // Wildcard address
+          InetAddress wildcard = InetAddress.getByName("0.0.0.0");
+          channel.socket().bind(new InetSocketAddress(wildcard, port));
+        }else{
+          channel.socket().bind(new InetSocketAddress(address, port));
+        }
 
         if (multicastSocket != null) {
             bindMulticastSocket();
@@ -238,22 +247,34 @@ public class UdpSocket {
         return info;
     }
 
-    void joinGroup(String address) throws IOException {
+    void joinGroup(String address, String iface) throws IOException {
         upgradeToMulticastSocket();
-
-        if (multicastGroups.contains(address)) {
+        String key = address + "_" + iface;
+        if (multicastGroups.contains(key)) {
             Log.e(LOG_TAG, "Attempted to join an already joined multicast group.");
             return;
         }
-
-        multicastGroups.add(address);
-        multicastSocket.joinGroup(new InetSocketAddress(InetAddress.getByName(address), channel.socket().getLocalPort()), networkInterface);
+        NetworkInterface groupIface = Utils.getNetworkInterfaceByHostAddress(iface);
+        if(groupIface == null){
+            Log.e(LOG_TAG, "Provided invalid interface name " + iface + " to joinGroup");
+            return;
+        }
+        multicastGroups.add(key);
+        int port = channel.socket().getLocalPort();
+        multicastSocket.joinGroup(new InetSocketAddress(InetAddress.getByName(address), port), groupIface);
     }
 
     void leaveGroup(String address) throws IOException {
-        if (multicastGroups.contains(address)) {
-            multicastGroups.remove(address);
-            multicastSocket.leaveGroup(InetAddress.getByName(address));
+        String key = null;
+        for(String group : multicastGroups){
+            if(group.startsWith(address + "_")){
+                key = group;
+                break;
+            }
+        }
+        if(key != null){
+            multicastGroups.remove(key);
+            multicastSocket.leaveGroup(InetAddress.getByName(key.split("_")[0]));
         }
     }
 
@@ -306,6 +327,27 @@ public class UdpSocket {
             if (this.receiveCallback != null) {
                 this.receiveCallback.receiveError(-2, e.getMessage());
             }
+        }
+    }
+
+    public void setMulticastInterface(NetworkInterface iface) throws IOException {
+        upgradeToMulticastSocket();
+        InetAddress address = null;
+        Enumeration<InetAddress> addrs = iface.getInetAddresses();
+        while (addrs.hasMoreElements()) {
+            InetAddress addr = addrs.nextElement();
+            if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+               address = addr;
+            }
+        }
+        if(address == null){
+            Log.e(LOG_TAG, "setMulticastInterface failed, no IPv4 address found for interface " + iface.getName());
+            return;
+        }
+        try{
+            this.multicastSocket.setInterface(address);
+        } catch (Exception e){
+           e.printStackTrace();
         }
     }
 
