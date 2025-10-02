@@ -1,6 +1,6 @@
 {
   "name": "@metrica-sports/capacitor-udp-socket",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A UDP Socket Plugin for capacitor",
   "license": "MIT",
   "author": {
